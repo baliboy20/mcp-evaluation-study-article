@@ -12,6 +12,8 @@ Nothing in the message itself was malformed. The flag was valid and the servers 
 
 That story is a useful lens for a newer problem. Today, an AI agent such as Claude Code can connect to databases, CRMs, ticketing systems and finance tools through the **Model Context Protocol (MCP)**. When it connects, each system describes its tools to the agent. So what happens when the description says one thing and the system does another?
 
+This article is the first in a four-part series on how to design, test and monitor MCP servers. Here, we look at the problem itself: why agents trust tool descriptions, and how that trust goes wrong. The next three parts then turn to the remedies in detail.
+
 ## First, what is "discovery"?
 
 Think of an agent as a capable new hire on their first day. They are bright and keen, but they have never seen your systems. Consequently, everything they know about your tools comes from the labels on the jars.
@@ -108,6 +110,14 @@ Knight Capital wasn't brought down by bad maths or a hostile attack. It was brou
 The encouraging news is that the fix is mostly unglamorous: clear labels, honest limits and a habit of checking. Those habits are cheap, whereas the alternative, as Knight discovered, can cost a company in under an hour.
 
 So label your jars, because the agent will believe every one of them.
+
+## Coming up in this series
+
+The checklist above is the short version. Each of the next three parts takes one stage of an MCP server's life and works through it properly.
+
+- **Part 2: Design.** How to write tool names, descriptions, schemas and server instructions that tell the agent the truth, including what a tool doesn't do.
+- **Part 3: Test.** How to check that the agent picks the right tool, fills in the right arguments and that each tool actually behaves as its description claims.
+- **Part 4: Monitor.** How to spot drift, watch which tools agents really choose in production and keep descriptions in step as systems change.
 
 ---
 

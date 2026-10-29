@@ -60,6 +60,10 @@ and finance tools through the <strong>Model Context Protocol
 (MCP)</strong>. When it connects, each system describes its tools to the
 agent. So what happens when the description says one thing and the
 system does another?</p>
+<p>This article is the first in a four-part series on how to design,
+test and monitor MCP servers. Here, we look at the problem itself: why
+agents trust tool descriptions, and how that trust goes wrong. The next
+three parts then turn to the remedies in detail.</p>
 <h2 id="first-what-is-discovery">First, what is "discovery"?</h2>
 <p>Think of an agent as a capable new hire on their first day. They are
 bright and keen, but they have never seen your systems. Consequently,
@@ -263,6 +267,21 @@ whereas the alternative, as Knight discovered, can cost a company in
 under an hour.</p>
 <p>So label your jars, because the agent will believe every one of
 them.</p>
+<h2 id="coming-up-in-this-series">Coming up in this series</h2>
+<p>The checklist above is the short version. Each of the next three
+parts takes one stage of an MCP server's life and works through it
+properly.</p>
+<ul>
+<li><strong>Part 2: Design.</strong> How to write tool names,
+descriptions, schemas and server instructions that tell the agent the
+truth, including what a tool doesn't do.</li>
+<li><strong>Part 3: Test.</strong> How to check that the agent picks the
+right tool, fills in the right arguments and that each tool actually
+behaves as its description claims.</li>
+<li><strong>Part 4: Monitor.</strong> How to spot drift, watch which
+tools agents really choose in production and keep descriptions in step
+as systems change.</li>
+</ul>
 <hr />
 <p><em>Protocol details reflect the MCP specification at the time of
 writing (October 2026); check modelcontextprotocol.io for the current
