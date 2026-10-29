@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 out=html
 mkdir -p "$out"
 # Every tracked .md file except those under html/ itself.
-mapfile -t files < <(find . -name '*.md' -not -path './html/*' -not -path './.git/*' | sed 's|^\./||' | sort)
+mapfile -t files < <(find . -name '*.md' -not -path './html/*' -not -path './html/pages/*' -not -path './.git/*' | sed 's|^\./||' | sort)
 items=""
 for f in "${files[@]}"; do
   dest="$out/${f%.md}.html"
@@ -21,10 +21,18 @@ for f in "${files[@]}"; do
       -o "$dest"
   items+="<li><a href=\"${dest#$out/}\">$title</a> <code>$f</code></li>"
 done
+# Standalone pages (e.g. saved artifacts) kept in html/pages/ are copied as-is; just index them.
+pages=""
+for p in "$out"/pages/*.html; do
+  [ -e "$p" ] || continue
+  t=$(grep -o -m1 '<title>[^<]*</title>' "$p" | sed -E 's/<\/?title>//g' || true)
+  pages+="<li><a href=\"${p#$out/}\">${t:-$(basename "$p")}</a></li>"
+done
 cat > "$out/index.html" <<HTML
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MCP Evaluation Study – Docs</title><link rel="stylesheet" href="style.css"></head>
 <body><h1>MCP Evaluation Study – Docs</h1><p>HTML versions of the repository's Markdown documents. Regenerate with <code>scripts/build-html.sh</code>.</p>
-<ul>$items</ul></body></html>
+<h2>Documents</h2><ul>$items</ul>
+<h2>Studies &amp; comparisons</h2><ul>$pages</ul></body></html>
 HTML
 echo "Built ${#files[@]} page(s) into $out/"

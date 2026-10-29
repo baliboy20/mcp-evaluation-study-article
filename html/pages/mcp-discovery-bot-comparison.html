@@ -1,0 +1,618 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MCP Discovery Bot Comparison</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a reading column; each question is a band with a tab strip of five bots and one panel visible at a time. */
+:root{
+  --bg:#f3f4f6; --surface:#ffffff; --fg:#1b222c; --muted:#5b6672; --line:#d9dde3;
+  --accent:#2b5f7e; --accent-soft:#e3edf3; --code-bg:#eceff3;
+  --tag-claude:#b45f2a; --tag-mistral:#c0781f; --tag-gemini:#3a6fb0; --tag-chatgpt:#2f8a68; --tag-copilot:#5b4fa8;
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a21; --surface:#1c242d; --fg:#e4e8ec; --muted:#9aa6b2; --line:#2e3944;
+  --accent:#8fbfdc; --accent-soft:#223544; --code-bg:#242e39;
+  --tag-claude:#e39a6a; --tag-mistral:#e6a94f; --tag-gemini:#8fb3e8; --tag-chatgpt:#6fc4a0; --tag-copilot:#a89ee6;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a21; --surface:#1c242d; --fg:#e4e8ec; --muted:#9aa6b2; --line:#2e3944;
+  --accent:#8fbfdc; --accent-soft:#223544; --code-bg:#242e39;
+  --tag-claude:#e39a6a; --tag-mistral:#e6a94f; --tag-gemini:#8fb3e8; --tag-chatgpt:#6fc4a0; --tag-copilot:#a89ee6;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15.5px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:860px;margin:0 auto}
+
+header.page{padding-block:40px 24px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--font-display);font-weight:500;font-size:clamp(28px,5vw,40px);line-height:1.1;margin:8px 0 12px;text-wrap:balance}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:var(--c);vertical-align:0}
+
+section.q{padding-block:36px 8px}
+section.q+section.q{border-top:1px solid var(--line)}
+.qlabel{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+h2.question{font-family:var(--font-display);font-weight:500;font-size:clamp(21px,3.4vw,27px);line-height:1.25;margin:6px 0 20px;text-wrap:balance}
+.asked{font-style:italic;color:var(--muted);font-size:14.5px;margin:-12px 0 20px;max-width:70ch}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:thin}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 14px;font:inherit;font-weight:500;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);opacity:.55}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tab[aria-selected="true"]::before{opacity:1}
+.tab:hover{color:var(--fg)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px}
+
+.panel{padding-block:22px 10px;min-width:0}
+.panel[hidden]{display:none}
+.answer{max-width:70ch}
+.answer>:first-child{margin-top:0}
+.answer p{margin:0 0 14px}
+.answer h3{font-family:var(--font-body);font-weight:600;font-size:15.5px;margin:26px 0 8px;color:var(--fg)}
+.answer h4{font-weight:600;font-size:15px;margin:18px 0 6px}
+.answer ul,.answer ol{padding-left:22px;margin:0 0 14px}
+.answer li{margin-bottom:6px}
+.answer li>ul,.answer li>ol{margin-top:6px}
+.answer code{font-family:var(--font-mono);font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+.answer pre{background:var(--code-bg);padding:14px 16px;border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:13px;line-height:1.5;margin:0 0 16px}
+.answer pre code{background:none;padding:0;font-size:inherit}
+.answer blockquote{margin:0 0 14px;padding:4px 0 4px 16px;border-left:3px solid var(--accent);color:var(--fg)}
+.answer strong{font-weight:600}
+.answer em{font-style:italic}
+.answer hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+.tablewrap{overflow-x:auto;margin:0 0 16px}
+.answer table{border-collapse:collapse;width:100%;font-size:14px}
+.answer th,.answer td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.answer th{font-weight:600;background:var(--accent-soft)}
+.answer a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+a.cite{font-family:var(--font-mono);font-size:11px;text-decoration:none;vertical-align:super;line-height:0;margin-left:2px;color:var(--accent)}
+.srcnote{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);display:inline-block;margin:-8px 0 14px}
+.kicker{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:4px}
+.note{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);margin-top:22px;padding-top:12px}
+.empty{color:var(--muted);font-style:italic;padding:28px 0}
+
+@media (max-width:480px){.tab{padding:10px 10px;font-size:13.5px}}
+@media (prefers-reduced-motion:no-preference){.panel{animation:fade .18s ease}}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+</style>
+
+<div class="wrap">
+<header class="page">
+  <div class="eyebrow">Five assistants · two questions · 29 October 2026</div>
+  <h1>MCP tool discovery: can mischaracterised metadata misdirect an agent?</h1>
+  <p class="lede">The same two questions were put to Claude, Mistral, Gemini, ChatGPT and Copilot. Their replies are reproduced below as given, lightly reformatted, so the answers can be compared side by side.</p>
+  <div class="legend">
+    <span style="--c:var(--tag-claude)">Claude</span>
+    <span style="--c:var(--tag-mistral)">Mistral</span>
+    <span style="--c:var(--tag-gemini)">Gemini</span>
+    <span style="--c:var(--tag-chatgpt)">ChatGPT</span>
+    <span style="--c:var(--tag-copilot)">Copilot</span>
+  </div>
+</header>
+
+<!-- ================================================================ QUESTION 1 -->
+<section class="q" id="q1">
+  <div class="qlabel">Question 1</div>
+  <h2 class="question">Does the quality of tool discovery affect how the agent behaves?</h2>
+  <p class="asked">As asked: "I want to talk about how, when MCP servers connect to Claude Code, the quality of each tool's discovery can affect how the agent behaves. For example the discovery wrongly identifies something about the data source or mischaracterises it. Is this an issue?"</p>
+
+  <div class="tabs" role="tablist" aria-label="Question 1 answers" data-group="q1">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="q1-claude" id="t-q1-claude" style="--c:var(--tag-claude)">Claude</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q1-mistral" id="t-q1-mistral" style="--c:var(--tag-mistral)">Mistral</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q1-gemini" id="t-q1-gemini" style="--c:var(--tag-gemini)">Gemini</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q1-chatgpt" id="t-q1-chatgpt" style="--c:var(--tag-chatgpt)">ChatGPT</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q1-copilot" id="t-q1-copilot" style="--c:var(--tag-copilot)">Copilot</button>
+  </div>
+
+  <!-- Q1 Claude -->
+  <div class="panel" role="tabpanel" id="q1-claude" aria-labelledby="t-q1-claude">
+  <div class="answer">
+    <p>Yes, it's a real issue, and arguably one of the more under-examined ones in MCP deployments. The reason is structural: at discovery time (<code>tools/list</code>) the server hands over a name, a description, an input schema, and optionally some annotations, and that text is <em>all</em> the model has when deciding whether to call a tool, how to fill its arguments, and what to make of what comes back. There's no verification step. Claude Code puts those descriptions straight into context as if they were part of the prompt, so a misleading description isn't a metadata error, it's effectively a bad instruction the agent will follow with the same confidence it gives everything else.</p>
+    <p>The mischaracterisation failures tend to fall into a few shapes:</p>
+    <p><strong>Scope and coverage.</strong> A tool described as "search customer records" that actually only indexes the last 90 days, or one table of several. The agent runs the search, gets nothing, and concludes the record doesn't exist. That conclusion then propagates: it tells the user, or worse, it takes a downstream action on the basis of absence. This is the nastiest class because the trajectory looks entirely reasonable on inspection.</p>
+    <p><strong>Semantics of parameters.</strong> <code>date</code> meaning created-date vs modified-date, <code>limit</code> capping results vs pages, an ID field that's a slug in one system and a UUID in another. The schema says <code>string</code>; only the description could have disambiguated it, and if it doesn't, the model guesses from the field name.</p>
+    <p><strong>Side effects.</strong> The spec has <code>readOnlyHint</code>, <code>destructiveHint</code>, <code>idempotentHint</code>, but they're optional and server-authored. A tool labelled as a query that actually writes, or one that's safe to retry described as if it isn't (or vice versa), changes how the agent plans. Claude Code also uses these hints to shape permission prompting, so a wrong annotation can route a destructive call past the user.</p>
+    <p><strong>Output shape.</strong> Most descriptions say nothing about what comes back. The model then infers meaning from JSON key names in the result, which is exactly the "mischaracterises the data source" problem you're pointing at, just deferred to the result-interpretation step. A field called <code>status</code> with values <code>1/2/3</code> and no legend is a coin flip.</p>
+    <p><strong>Drift.</strong> The description was accurate when written; the backing schema moved. Nothing in MCP forces them to stay in sync, so you get the stale-docstring problem but with an agent acting on it.</p>
+    <p><strong>Ambiguity across servers.</strong> Three connected servers each with a <code>search</code> tool, with descriptions that don't say which corpus they cover. Tool choice becomes a lottery weighted by whichever description happens to be phrased most like the user's request.</p>
+    <p>And there's the adversarial version of all this (tool poisoning), where a description contains instructions rather than a mischaracterisation, but that's a separate conversation; the honest-mistake case is more common and harder to notice.</p>
+    <p>What makes it compound is that agents treat tool output as ground truth. A model will second-guess its own prior knowledge far more readily than it will second-guess a tool result. So a description error upstream becomes a confident factual claim downstream.</p>
+    <p>On the mitigation side, the things that seem to help most:</p>
+    <ul>
+      <li>Treat the description as an interface contract and test it the way you'd test the code: tool-selection evals (does the agent pick this tool for these ten prompts and not for these ten?) and argument-construction evals.</li>
+      <li>Put coverage, freshness, limits, and failure semantics <em>in the description</em>: what the tool does not cover, what an empty result means, whether it's paginated.</li>
+      <li>Describe the output, or give the data source an explicit <code>describe_schema</code> / <code>explain_fields</code> tool so the agent can ground itself before querying.</li>
+      <li>For third-party servers you can't edit, you can correct the record in <code>CLAUDE.md</code> ("the Jira search tool only returns issues in projects X and Y"), or put a thin proxy server in front that rewrites descriptions. Both are a bit grubby but they work.</li>
+      <li>Fewer, more precisely scoped tools beat many overlapping ones; the tool-search/deferred-loading approach in Claude Code reduces the context cost but doesn't fix ambiguity between similarly described tools once they're loaded.</li>
+    </ul>
+    <p>Given your ROME work, the interesting framing might be that tool descriptions are a requirements artefact: they're the specification the agent builds against, and they deserve the same traceability and validation discipline as any other spec. Is there a particular server or failure you've run into that prompted this?</p>
+  </div>
+  </div>
+
+  <!-- Q1 Mistral -->
+  <div class="panel" role="tabpanel" id="q1-mistral" aria-labelledby="t-q1-mistral" hidden>
+  <div class="answer">
+    <p>Yes, it's a real and well-documented class of problem. Tool discovery in MCP is fundamentally an act of description, and descriptions are lossy. A few angles worth discussing:</p>
+    <h3>Where it goes wrong</h3>
+    <ol>
+      <li><strong>Mischaracterized descriptions → wrong tool selection.</strong> Claude Code builds its picture of your capabilities purely from the <code>name</code>, <code>description</code>, and JSON Schema of each tool. If a description says "get customer records" but the tool actually returns billing events, the agent will confidently call it in the wrong context and interpret the output as if it were customer data. The failure isn't a crash — it's a plausible but wrong reasoning chain, which is worse because nothing signals the error.</li>
+      <li><strong>Schema lies are more damaging than prose lies.</strong> If the input schema claims a field is optional when it's required, or types something as a string when it's an enum, the agent will construct arguments that fail server-side. And when tools return data that doesn't match what the discovery metadata promised, the agent has no way to detect the mismatch — it just folds the bad data into its answer.</li>
+      <li><strong>Discovery quality shapes behavior before any call.</strong> A vague or overloaded description ("handles data operations") makes the agent guess, or worse, avoid the tool entirely and fall back to bash/fetch workarounds. An overly broad description does the opposite — the tool gets called for things it shouldn't. Both are behavioral distortions, not just ergonomic annoyances.</li>
+      <li><strong>It compounds at scale.</strong> Claude Code works best with a handful of high-signal tools. Servers that expose 50+ thin, poorly-differentiated tools force the agent into a selection problem the descriptions can't solve, and you get more "tool roulette" — retries, wrong calls, wasted context.</li>
+    </ol>
+    <h3>Is it "an issue" in the strict sense?</h3>
+    <p>I'd frame it as an inherent trust-boundary problem rather than a bug. The protocol has no mechanism for verifying that a tool's metadata matches its actual behavior — there's no type-checking of discovery claims against runtime results. So discovery metadata functions like an unverified API contract, and the agent is a trusting consumer of it. Three consequences:</p>
+    <ul>
+      <li><strong>Silent failure mode:</strong> mismatches produce confident hallucinations rather than errors.</li>
+      <li><strong>Security surface:</strong> a malicious or compromised server can describe a tool as "read calendar" while it exfiltrates data; the agent can't tell. Discovery is also an attack vector — prompt injection can live inside tool descriptions.</li>
+      <li><strong>No remediation loop:</strong> unless the human notices the wrong answer, nothing in the system ever corrects the faulty description.</li>
+    </ul>
+    <h3>Practical mitigations</h3>
+    <ul>
+      <li>Treat descriptions as the most important part of an MCP server, not an afterthought — write them for a model reader: what the tool does, what it does not do, when to prefer it over siblings.</li>
+      <li>Keep tool count low and coarse-grained; let parameters carry the specificity.</li>
+      <li>Validate that schemas reflect real runtime behavior (property names, optionality, enums).</li>
+      <li>On the client side: use tool allowlists, and monitor which tools the agent actually picks versus what you intended — mismatches there are often a discovery-quality smell.</li>
+    </ul>
+    <p>So yes — discovery isn't just plumbing, it's the epistemic foundation the agent reasons on. Bad metadata doesn't degrade gracefully; it produces wrong behavior that looks right. Is there a specific server or failure you've run into? That would make this concrete.</p>
+  </div>
+  </div>
+
+  <!-- Q1 Gemini -->
+  <div class="panel" role="tabpanel" id="q1-gemini" aria-labelledby="t-q1-gemini" hidden>
+  <div class="answer">
+    <p>Yes, this is a major issue. In fact, tool and data source discovery is one of the most fragile bottlenecks in working with Model Context Protocol (MCP) servers and AI agents like Claude Code.</p>
+    <p>When an MCP server mischaracterizes a data source, provides vague schemas, or mislabels its capabilities, it creates a cascade of downstream failures in how the agent reasons, plans, and executes code.</p>
+    <h3>Why Mischaracterization Breaks Agent Behavior</h3>
+    <ol>
+      <li><strong>Hallucinated Parameters and False Assumptions.</strong> If an MCP server's tool description claims a database function returns normalized timestamps, but it actually returns raw strings or localized timezones, Claude will write code trusting that description. The agent will build queries or logic based on a false contract, leading to silent bugs or runtime crashes.</li>
+      <li><strong>The "Tool Search" Trap.</strong> Claude Code relies heavily on dynamic tool discovery (searching through tool names, descriptions, and parameter schemas on-demand to save context). If a tool is poorly described—for example, a tool named <code>run_query</code> with a description like "does stuff with data" instead of "retrieves user profile records from PostgreSQL"—Claude's semantic search routing will struggle. It may either fail to find the tool when it desperately needs it, or worse, pull it for the wrong task because keywords overlapped.</li>
+      <li><strong>Context Pollution and Misdirection.</strong> If an MCP server overstates what a data source contains (e.g., claiming a table has relational foreign keys when it's actually an unindexed flat log), Claude will formulate complex multi-step refactoring plans that completely mismatch reality. The agent spends its reasoning loops trying to navigate a data structure that doesn't exist the way it was advertised.</li>
+    </ol>
+    <h3>Common Failure Modes</h3>
+    <ul>
+      <li><strong>The Schema-Reality Gap:</strong> The tool schema says a field is optional or nullable, but the underlying database throws a constraint violation if it's missing. Claude assumes the schema is the absolute source of truth and walks right into the error.</li>
+      <li><strong>Semantic Drift:</strong> A tool description uses internal jargon ("fetches the primary ledger sync") that doesn't align with standard developer terminology. Claude fails to map the user's intent to that tool during discovery.</li>
+    </ul>
+    <h3>How to Mitigate It</h3>
+    <ul>
+      <li><strong>Treat MCP Definitions as Code Contracts:</strong> Do not write lazy MCP server descriptions. Be hyper-explicit about data types, constraints, edge cases, and what the data actually looks like in the tool description fields.</li>
+      <li><strong>Leverage Robust Naming Conventions:</strong> Ensure tool names are scoped and descriptive (e.g., <code>db_fetch_active_users_sql</code> rather than just <code>get_data</code>).</li>
+      <li><strong>Sanity-Check with Inspection Tools:</strong> When bringing in a new MCP server, have Claude run a preliminary inspection or schema-introspection command first, rather than letting it blindly trust the high-level tool definitions provided by the server handshake.</li>
+    </ul>
+  </div>
+  </div>
+
+  <!-- Q1 ChatGPT -->
+  <div class="panel" role="tabpanel" id="q1-chatgpt" aria-labelledby="t-q1-chatgpt" hidden>
+  <div class="answer">
+    <p>Yes. It is a genuine issue, and it is particularly important when Claude Code uses MCP servers to perform business analysis, data reconciliation or other tasks where the correctness of the result depends on understanding the underlying data.</p>
+    <p>The issue is broader than whether a tool is discovered correctly. The agent may discover the tool successfully but misunderstand what the tool does, what its data represents, or what conclusions can legitimately be drawn from its output.</p>
+    <p>I would distinguish three failure modes:</p>
+    <ol>
+      <li><strong>Discovery failure:</strong> the agent does not discover a relevant tool or resource.</li>
+      <li><strong>Semantic mischaracterisation:</strong> the agent discovers the tool but misunderstands its purpose, the meaning of its fields or the nature of its data source.</li>
+      <li><strong>Operational misinterpretation:</strong> the agent understands the interface but uses it incorrectly, draws an unsupported conclusion or applies an inappropriate business rule.</li>
+    </ol>
+    <p>The second is especially insidious because the tool can execute perfectly and return valid data, while the agent's reasoning is wrong.</p>
+    <h3>1. Why this is a real design problem</h3>
+    <p>MCP tool descriptions are part of the information Claude uses to select and invoke tools. Anthropic's documentation explicitly recommends detailed descriptions covering purpose, appropriate use, parameter meanings and limitations.</p>
+    <span class="srcnote">cited: Claude Platform Docs</span>
+    <p>Consider a financial data source containing transactions.</p>
+    <p>The MCP tool is named <code>get_transactions</code>. Its description says:</p>
+    <blockquote>Retrieves completed transactions for the requested period.</blockquote>
+    <p>But the underlying source actually returns all transaction records, including pending, reversed and failed transactions.</p>
+    <p>Claude may then:</p>
+    <ul>
+      <li>Treat pending transactions as completed.</li>
+      <li>Calculate totals using the wrong population.</li>
+      <li>Report a reconciliation discrepancy that does not exist.</li>
+      <li>Apply an inappropriate rule to the records.</li>
+      <li>Produce a plausible report that passes superficial review.</li>
+    </ul>
+    <p>The tool has not failed technically. The failure is in the agent's understanding of the data.</p>
+    <p>This is a form of semantic interface failure: the meaning conveyed by the interface differs from the meaning of the underlying operation or data.</p>
+    <h3>2. Where can the mischaracterisation originate?</h3>
+    <p>It is worth separating four possible sources.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Source</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>MCP server metadata</td><td>The tool description inaccurately defines the data returned.</td></tr>
+        <tr><td>Underlying data source</td><td>The database contains ambiguous fields or inconsistent status definitions.</td></tr>
+        <tr><td>Claude's interpretation</td><td>The description is accurate, but Claude draws an unjustified inference.</td></tr>
+        <tr><td>Changes over time</td><td>The source changes its behaviour but its description remains unchanged.</td></tr>
+      </tbody>
+    </table></div>
+    <p>MCP provides names, descriptions, input schemas and optional output schemas and behavioural annotations. These provide a contract of sorts, but they do not guarantee that the description faithfully represents the implementation.</p>
+    <span class="srcnote">cited: GitHub</span>
+    <h3>3. How should an agentic workflow address this?</h3>
+    <p>I would introduce a distinct MCP Capability and Semantic Validation stage before the agent is permitted to rely on a tool for consequential business processing.</p>
+    <p>Its purpose would be to establish four things:</p>
+    <ol>
+      <li><strong>Declared meaning:</strong> What does the tool claim to do?</li>
+      <li><strong>Actual behaviour:</strong> What does it demonstrably do?</li>
+      <li><strong>Data semantics:</strong> What do its fields, statuses, units and records actually represent?</li>
+      <li><strong>Permitted inference:</strong> What conclusions can the agent safely draw from the returned information?</li>
+    </ol>
+    <p>For example, the validation agent could compare the tool's description with its output schema, authoritative source documentation and controlled read-only test results. Any unresolved discrepancy would be recorded rather than silently resolved through an LLM's best guess.</p>
+    <p>The resulting capability record could include:</p>
+    <ul>
+      <li>Declared purpose and verified purpose.</li>
+      <li>Expected and observed data semantics.</li>
+      <li>Known limitations and exclusions.</li>
+      <li>Evidence supporting each assertion.</li>
+      <li>Confidence and unresolved ambiguities.</li>
+      <li>Validation date and version.</li>
+      <li>Restrictions on downstream use.</li>
+    </ul>
+    <p>A crucial distinction: a second LLM agreeing with the first does not establish correctness. Validation needs independent evidence, ideally from authoritative documentation, executable tests, source-system contracts or known test cases.</p>
+    <h3>4. The broader implication</h3>
+    <p>This suggests that MCP integration should be treated as more than a technical connectivity task. It is also a problem of epistemic reliability: what the agent knows about its tools, why it believes it, and whether that belief is justified.</p>
+    <p>For agentic business-process design, I would make the principle explicit:</p>
+    <blockquote>An agent should not be permitted to treat a discovered capability as semantically verified merely because its interface is available and its calls succeed.</blockquote>
+    <p>That could be a significant component of your business-process methodology. It would help prevent errors at the point where an agent first interprets its operational environment, rather than attempting to detect every resulting mistake later in the workflow.</p>
+  </div>
+  </div>
+
+  <!-- Q1 Copilot -->
+  <div class="panel" role="tabpanel" id="q1-copilot" aria-labelledby="t-q1-copilot" hidden>
+  <div class="answer">
+    <p>Yes, this is a massive issue. In fact, within agentic AI development, this is widely considered one of the leading failure points for tool-using agents.<a class="cite" href="https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc">1</a></p>
+    <p>When you connect an MCP server to an agent like Claude Code, the agent does not inherently "know" what your database, API, or file system looks like. It relies entirely on the semantic reflection provided during the discovery phase. If the discovery metadata mischaracterises a data source or its schema, it drastically alters Claude's "mental model," causing systemic behavioural shifts.<a class="cite" href="https://arxiv.org/html/2602.14878v3">1</a><a class="cite" href="https://medium.com/@ai_transfer_lab/the-mcp-server-nobody-uses-3bc7e50fbd4e">2</a></p>
+    <p>The consequences of poor tool discovery quality fall into several critical categories:</p>
+    <h3>1. Hallucinated Architectures and Prompt Failures</h3>
+    <p>If an MCP tool discovery phase misrepresents a data source (e.g., claiming a relational PostgreSQL database is a document-store NoSQL database, or incorrectly describing columns and data types), Claude Code will construct syntactically invalid queries.<a class="cite" href="https://www.reddit.com/r/ClaudeWorkflows/comments/1xe0wq8/workflow_lessons_learned_building_robust_mcp/">1</a><a class="cite" href="https://medium.com/@ai_transfer_lab/the-mcp-server-nobody-uses-3bc7e50fbd4e">2</a></p>
+    <ul><li><strong>The Result:</strong> Claude will aggressively attempt to run queries based on the false description, hit repeated schema or database errors, and get stuck in expensive, token-consuming retry loops trying to "fix" a problem rooted in a flawed premise.<a class="cite" href="https://medium.com/@ai_transfer_lab/the-mcp-server-nobody-uses-3bc7e50fbd4e">1</a></li></ul>
+    <h3>2. Extreme "Agency Shifts" and Hallucinated Scope</h3>
+    <p>LLMs are highly sensitive to natural language prompts and structural definitions. If a tool description is vague, over-generalized, or mischaracterised, Claude might misinterpret the appropriate scope of an action.<a class="cite" href="https://www.scalekit.com/blog/mcp-security-risks">1</a></p>
+    <ul>
+      <li><strong>The Over-Exploration Trap:</strong> If a Salesforce or internal database MCP tool has an ambiguous description, Claude may interpret "fetch user info" too broadly. Instead of fetching one profile, it might write a sweeping query that pulls thousands of records, bloating your context window, spiking your token costs, or accidentally triggering data rate limits.<a class="cite" href="https://www.anthropic.com/research/code-execution-with-mcp">1</a><a class="cite" href="https://www.scalekit.com/blog/mcp-security-risks">2</a></li>
+      <li><strong>The Accidental Execution:</strong> A mischaracterised tool name or description might lead Claude to believe a destructive tool (like a drop-table command or branch deletion tool) is merely a "cleanup" or "reset" utility, causing it to execute catastrophic actions without realizing the impact.<a class="cite" href="https://www.scalekit.com/blog/mcp-security-risks">1</a></li>
+    </ul>
+    <h3>3. "Invisible" or Low-Priority Tools</h3>
+    <p>Empirical research into MCP integrations shows that teams frequently ship tools with minimal semantic descriptions, essentially making them "invisible" to the agent.<a class="cite" href="https://medium.com/@ai_transfer_lab/the-mcp-server-nobody-uses-3bc7e50fbd4e">1</a></p>
+    <ul><li><strong>The Selection Bias:</strong> If you have two tools that can access similar data, but Server A has an aggressively optimized, descriptive manifest while Server B has a technically superior but poorly described manifest, Claude will consistently prioritize Server A. Bad discovery metadata actively trains the agent to avoid your data source.<a class="cite" href="https://medium.com/@ai_transfer_lab/the-mcp-server-nobody-uses-3bc7e50fbd4e">1</a></li></ul>
+    <h3>4. High Error Rates in Action Execution</h3>
+    <p>Data from production platforms tracking millions of MCP tool calls reveals a notable gap in reliability depending on how closely descriptions are tuned. For instance, metrics show that when tool descriptions are perfectly tailored, agent error rates can sit as low as 1% to 2%. However, general enterprise environments using out-of-the-box or loosely described tools see Claude Code error rates hover closer to 5.7%. This gap is almost entirely driven by how well the model understands what the tool expects.<a class="cite" href="https://posthog.com/blog/how-ai-agents-behave">1</a></p>
+    <h3>How to Mitigate Discovery Quality Issues in Claude Code</h3>
+    <p>If you are building an MCP server or writing a wrapper for Claude Code, the best way to handle this issue is to avoid treating tool discovery as an afterthought.</p>
+    <ol>
+      <li><strong>Move Syntax to Descriptions:</strong> Do not rely on your base system prompt to tell Claude how your data source looks. Move detailed constraints, column relationships, and valid parameter examples directly into the tool's JSON schema description.<a class="cite" href="https://www.reddit.com/r/ClaudeWorkflows/comments/1xe0wq8/workflow_lessons_learned_building_robust_mcp/">1</a></li>
+      <li><strong>Implement Guardrail Files:</strong> Use a CLAUDE.md or AGENTS.md file in your local workspace repository. Hardcode critical context about what your active MCP servers are, what data they cover, and explicitly dictate when searching or using that server is mandatory.<a class="cite" href="https://mirin.pro/blog/agentic-workflows-part2-ref-mcp/">1</a><a class="cite" href="https://www.reddit.com/r/ClaudeWorkflows/comments/1xe0wq8/workflow_lessons_learned_building_robust_mcp/">2</a></li>
+      <li><strong>Use Graceful Error Elicitation:</strong> If the underlying data schema changes dynamically, design your MCP server to return error responses that act as dynamic "re-discovery" prompts (e.g., "Invalid Column 'X'. Did you mean 'Y'? The current schema is...") so Claude can immediately pivot and correct its behavioral trajectory.<a class="cite" href="https://www.reddit.com/r/ClaudeWorkflows/comments/1xe0wq8/workflow_lessons_learned_building_robust_mcp/">1</a></li>
+    </ol>
+    <p>Are you seeing Claude Code fail or behave erratically with a specific data source right now? If you share the JSON schema or description of the tool that's misbehaving, we can rewrite it to align Claude's behavior.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ================================================================ QUESTION 2 -->
+<section class="q" id="q2">
+  <div class="qlabel">Question 2</div>
+  <h2 class="question">How much information can MCP discovery carry, and at what levels and in what forms?</h2>
+  <p class="asked">As asked: "How much information is it possible to [pass in] the discovery of an MCP server, and what levels and forms do they take?"</p>
+
+  <div class="tabs" role="tablist" aria-label="Question 2 answers" data-group="q2">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="q2-claude" id="t-q2-claude" style="--c:var(--tag-claude)">Claude</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q2-mistral" id="t-q2-mistral" style="--c:var(--tag-mistral)">Mistral</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q2-gemini" id="t-q2-gemini" style="--c:var(--tag-gemini)">Gemini</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q2-chatgpt" id="t-q2-chatgpt" style="--c:var(--tag-chatgpt)">ChatGPT</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="q2-copilot" id="t-q2-copilot" style="--c:var(--tag-copilot)">Copilot</button>
+  </div>
+
+  <!-- Q2 Claude -->
+  <div class="panel" role="tabpanel" id="q2-claude" aria-labelledby="t-q2-claude">
+  <div class="answer">
+    <p>Quite a lot, actually, and it arrives at several distinct layers, not just the tool list. Most people only ever look at <code>tools/list</code>, which is where the mischaracterisation problem bites hardest, but a well-built server can describe itself far more richly than that. Working from the outside in:</p>
+    <p><strong>0. Before connection: registry / config metadata.</strong> The MCP Registry's <code>server.json</code> (and your <code>.mcp.json</code> entry) carries name, description, version, package or remote endpoint, and environment/arguments. This is purely for humans and installers; the model never sees it, but it's where expectations about what a server <em>is</em> get set.</p>
+    <p><strong>1. The <code>initialize</code> handshake.</strong> The server returns <code>protocolVersion</code>, <code>serverInfo</code> (name, version, optional <code>title</code>), a <code>capabilities</code> object (which of tools / resources / prompts / logging / completions it supports, plus sub-flags like <code>listChanged</code> and <code>subscribe</code>), and crucially an <code>instructions</code> string. That last one is free text the client is expected to inject into the system prompt, and Claude Code does exactly that (the "MCP Server Instructions" block you see in a session). It's the one place a server can say "here's how to think about my tools as a set, here's what I don't cover, call X before Y." It's also the most under-used field in the spec and the best place to correct the scope problems we discussed.</p>
+    <p><strong>2. The catalogue: three lists with different audiences.</strong></p>
+    <ul>
+      <li><em>Tools</em> (<code>tools/list</code>): <code>name</code>, optional <code>title</code>, <code>description</code>, <code>inputSchema</code> (JSON Schema), optional <code>outputSchema</code> (added in the 2025-06 revision), <code>annotations</code> (<code>readOnlyHint</code>, <code>destructiveHint</code>, <code>idempotentHint</code>, <code>openWorldHint</code>, <code>title</code>), optional <code>icons</code>, and a <code>_meta</code> bag. Model-controlled: the model decides when to call them.</li>
+      <li><em>Resources</em> (<code>resources/list</code> and <code>resources/templates/list</code>): <code>uri</code> or RFC 6570 <code>uriTemplate</code>, <code>name</code>, <code>title</code>, <code>description</code>, <code>mimeType</code>, <code>size</code>, <code>annotations</code> (<code>audience</code>, <code>priority</code>, <code>lastModified</code>). Application-controlled: the host decides whether and how the model sees them. In Claude Code they surface via <code>@server:resource</code> mentions and the <code>ListMcpResourcesTool</code>/<code>ReadMcpResourceTool</code> pair rather than being pushed into context.</li>
+      <li><em>Prompts</em> (<code>prompts/list</code>): <code>name</code>, <code>title</code>, <code>description</code>, and typed <code>arguments</code> (each with name, description, required). User-controlled: Claude Code exposes them as slash commands.</li>
+    </ul>
+    <p>Each list is paginated with cursors, so "discovery" can be partial if the client stops early.</p>
+    <p><strong>3. The schema layer.</strong> This is the richest and most neglected channel. <code>inputSchema</code> isn't just types: every property can carry its own <code>description</code>, <code>enum</code>, <code>format</code>, <code>pattern</code>, min/max, defaults, and <code>required</code>. "<code>date</code> is the record's last-modified timestamp in ISO 8601, UTC" goes here, not in the tool description. <code>outputSchema</code> lets you state what comes back; when present, tool results can include <code>structuredContent</code> that the client may validate against it. Whether a given host surfaces the output schema to the model is host-dependent, so I wouldn't rely on it as the model's only source of result semantics yet.</p>
+    <p><strong>4. Result-time information.</strong> Tool results carry content blocks (text, image, audio, resource links, embedded resources), <code>structuredContent</code>, and <code>isError</code>. A result can therefore <em>point at</em> further discoverable things (resource links), which is a way of doing progressive disclosure.</p>
+    <p><strong>5. Dynamic discovery.</strong> <code>notifications/tools/list_changed</code> (and the resource/prompt equivalents) mean the catalogue isn't fixed at connect time. A server can expose a minimal set, then add tools after authentication, after a mode switch, or in response to the client's declared <code>roots</code>. Resources additionally support <code>subscribe</code> / <code>resources/updated</code>. Hosts vary in how gracefully they re-list; this is a source of stale-description bugs in its own right.</p>
+    <p><strong>6. Interactive channels (server → client requests).</strong> <em>Elicitation</em> lets a server ask the user a structured question mid-call. <em>Sampling</em> lets it ask the host model to generate something. <em>Completions</em> (<code>completion/complete</code>) give argument autocompletion for prompt and resource-template parameters. These don't describe the server, but they let it fill gaps at runtime rather than front-loading everything into descriptions.</p>
+    <p><strong>7. Client → server context.</strong> <code>roots</code> tells the server which filesystem roots the client is operating over; a server can use that to tailor what it advertises.</p>
+    <p>As for <em>how much</em>: the spec imposes no length limit on any description or instructions string. The practical limit is the host's context budget. Claude Code loads tool descriptions and schemas into context (with a deferred/tool-search mode once the set gets large, as you can see in this very session where most MCP tools are listed by name only until fetched), so verbose descriptions across many servers compete for the same tokens as your code and conversation. The trade-off is real: the information that would prevent the mischaracterisation failures mostly belongs in schema property descriptions and <code>instructions</code>, which are cheaper per unit of disambiguation than padding the tool description itself.</p>
+    <p>So the layered answer to your earlier question is: the model typically sees <code>instructions</code> + tool name/description/inputSchema (+ annotations influencing permissions); it does <em>not</em> automatically see resources, prompts, registry metadata, or possibly output schemas. If a server puts its honest scope statement in a resource called <code>about</code>, the agent will never read it unless told to. Where the information lives matters as much as whether it exists.</p>
+    <p>One caveat: the spec has had a revision roughly every six to nine months, so the exact field set (icons, <code>_meta</code> conventions, output schema handling) is worth checking against the current version on modelcontextprotocol.io before you build anything that depends on it.</p>
+  </div>
+  </div>
+
+  <!-- Q2 Mistral -->
+  <div class="panel" role="tabpanel" id="q2-mistral" aria-labelledby="t-q2-mistral" hidden>
+  <div class="answer">
+    <p>Good question — "discovery" in MCP isn't one thing, it's several layered surfaces, each with different expressive power. Here's the full picture of what a server can expose and what forms it takes.</p>
+    <h3>The levels, from coarse to fine</h3>
+    <h4>1. Server identity and capabilities (the handshake)</h4>
+    <p>During initialization, the client and server exchange protocol versions and a <code>capabilities</code> object. This is the coarsest level — it declares <em>what categories of features exist</em>, not what they contain:</p>
+<pre><code>{
+  "capabilities": {
+    "tools": { "listChanged": true },
+    "resources": { "subscribe": true, "listChanged": true },
+    "prompts": { "listChanged": true },
+    "logging": {},
+    "sampling": {},
+    "elicitation": {}
+  },
+  "serverInfo": { "name": "github-mcp", "version": "1.2.0" },
+  "instructions": "Use search_tools before create_tools..."
+}</code></pre>
+    <p>Two things matter here: <code>serverInfo</code> (identity), and the optional top-level <strong><code>instructions</code> field</strong> — free-text server-wide guidance that gets injected into the agent's context. This is the highest-bandwidth channel: a server can include entire usage policies ("always filter by project before listing issues") that apply globally. Most servers underuse it.</p>
+    <h4>2. Tool listings (the main event)</h4>
+    <p><code>tools/list</code> returns each tool with:</p>
+    <ul>
+      <li><strong><code>name</code></strong> — the programmatic identifier</li>
+      <li><strong><code>description</code></strong> — unbounded free text, and this is where the real bandwidth is. You can put usage rules, caveats, examples, and inter-tool guidance in here</li>
+      <li><strong><code>inputSchema</code></strong> — a JSON Schema: types, required fields, enums, descriptions <em>per property</em> (field-level docs are another underused channel)</li>
+      <li><strong><code>outputSchema</code></strong> (optional, newer spec revisions) — lets a tool declare its return shape, which enables structured output handling</li>
+      <li><strong><code>annotations</code></strong> — a small set of standardized hints:
+        <ul>
+          <li><code>title</code> — human-readable label</li>
+          <li><code>readOnlyHint</code> — does not mutate state</li>
+          <li><code>destructiveHint</code> — may destructively mutate</li>
+          <li><code>idempotentHint</code> — repeated calls are safe</li>
+          <li><code>openWorldHint</code> — interacts with external entities</li>
+        </ul>
+        Note these are <em>hints, not guarantees</em> — the spec explicitly says clients must not trust them for security decisions.</li>
+    </ul>
+    <h4>3. Resources (addressable data)</h4>
+    <p><code>resources/list</code> exposes URI-addressable content — files, database records, API entities. Each has a <code>name</code>, <code>description</code>, <code>mimeType</code>, and optionally a <code>uriTemplate</code> for parameterized access. This is a different discovery form: instead of "actions the agent can take," it's "data that exists and can be read." Resources can also be <em>subscribed to</em> for change notifications.</p>
+    <h4>4. Prompts (templated workflows)</h4>
+    <p><code>prompts/list</code> exposes named, parameterized prompt templates with per-argument descriptions. Discovery here is essentially "pre-authored playbooks" — a server can encode institutional knowledge of <em>how</em> to use its own tools in combination.</p>
+    <h4>5. Runtime notifications</h4>
+    <p><code>listChanged</code> notifications tell the client a tool/resource list has gone stale and should be re-fetched. <code>progress</code> notifications, logging messages, and <code>messages/notification</code> streams add a dynamic layer — discovery isn't purely static.</p>
+    <h4>6. Elicitation (the reverse channel)</h4>
+    <p>Newer spec revisions add server→user requests, so a server can ask the human for input mid-operation. Not strictly discovery, but it changes what a server needs to advertise: it can defer explanation to the point of use.</p>
+    <h3>How much information, practically?</h3>
+    <p>There are no hard protocol limits on description text — a tool description can theoretically carry kilobytes. But the real constraint is <strong>context window economics</strong>:</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Channel</th><th>Bandwidth</th><th>Cost model</th></tr></thead>
+      <tbody>
+        <tr><td><code>instructions</code></td><td>Unbounded text</td><td>Always in context</td></tr>
+        <tr><td>Tool descriptions</td><td>Unbounded per tool</td><td>Loaded when tools are listed</td></tr>
+        <tr><td>Input/output schemas</td><td>Structured, effectively unbounded</td><td>Per-call, but schemas often kept resident</td></tr>
+        <tr><td>Annotations</td><td>A handful of booleans</td><td>Trivial</td></tr>
+        <tr><td>Resource descriptions</td><td>One line each</td><td>On listing</td></tr>
+      </tbody>
+    </table></div>
+    <p>Claude Code's behavior: it typically loads all tool definitions from connected servers into context, so a server with 40 verbose tools can consume a substantial chunk of the window <em>before the agent does anything</em>. That's why the emerging best practice is a discovery trade-off: <strong>coarse, well-described tools with rich field-level schemas beat fine-grained ones with prose essays.</strong> Structured schema information (enums, types) teaches the agent more per token than prose.</p>
+    <h3>What's missing</h3>
+    <p>Worth noting the gaps, since they tie back to your first question:</p>
+    <ul>
+      <li><strong>No behavioral contract verification</strong> — descriptions and annotations are unverified claims</li>
+      <li><strong>No examples/affordances standard</strong> — you can embed "example: <code>{"query": "..."}</code>" in prose, but there's no structured example field</li>
+      <li><strong>No cost/latency/rate-limit metadata</strong> — the agent can't discover that one tool takes 30 seconds</li>
+      <li><strong>No dependency information</strong> — a server can't declare "call <code>search</code> before <code>create</code>" structurally; it must say so in prose and hope</li>
+    </ul>
+    <p>So the answer to "how much": <strong>as much text as you want, at five-plus structural levels, but only a few structured channels</strong> — and the practical limit is attention and context, not the protocol. The strongest servers put one-line identity in <code>instructions</code>, one-line-per-tool with <code>readOnlyHint</code>-style annotations, and push all the specificity into schema field descriptions where it's cheapest to trust.</p>
+    <p>Want me to check the current spec revisions for anything new on this front (e.g., how elicitation or <code>outputSchema</code> support has actually landed in Claude Code)?</p>
+  </div>
+  </div>
+
+  <!-- Q2 Gemini -->
+  <div class="panel" role="tabpanel" id="q2-gemini" aria-labelledby="t-q2-gemini" hidden>
+  <div class="answer">
+    <p>In the Model Context Protocol (MCP) architecture, discovery is the foundational mechanism that lets an AI client (like Claude Code) know what a server can do.</p>
+    <p>Discovery is not just a single binary handshake; it occurs across <strong>structured capability layers</strong>, spans <strong>multiple primitive types</strong>, and operates at <strong>different stages of a session</strong>.</p>
+    <hr>
+    <h3>1. The Core Levels of MCP Discovery</h3>
+    <p>Discovery happens in a stepped hierarchy during initialization and runtime:</p>
+    <ul>
+      <li><strong>Level 1: Protocol &amp; Capability Negotiation (The Handshake)</strong><br>When Claude Code connects to an MCP server, they exchange an <code>initialize</code> request and response. Here, the server declares its high-level capabilities (e.g., whether it supports tools, resources, prompts, or logging). If a server claims it supports tools, Claude opens up the discovery pipeline for them.</li>
+      <li><strong>Level 2: The Manifest/Catalog Discovery (<code>tools/list</code>, <code>resources/list</code>, etc.)</strong><br>Once initialized, the client actively pulls the inventories via JSON-RPC methods like <code>tools/list</code> or <code>resources/list</code>. This is where the server dumps its entire menu of capabilities into the context window or an internal registry.</li>
+      <li><strong>Level 3: Dynamic Real-Time Updates (<code>notifications/tools/list_changed</code>)</strong><br>Discovery is not always static. Advanced MCP servers can emit change notifications mid-session if data schemas evolve, files are added, or permissions change, forcing the client to re-discover parts of the environment.</li>
+    </ul>
+    <hr>
+    <h3>2. The Forms Discovery Takes (The MCP Primitives)</h3>
+    <p>When an MCP server exposes its data and capabilities to Claude, it does so through three distinct primitive forms:</p>
+    <h4>A. Tool Discovery (<code>tools/list</code>)</h4>
+    <ul>
+      <li><strong>What it is:</strong> Executable functions that the model can call to perform actions or compute data.</li>
+      <li><strong>Form it takes:</strong> A collection of JSON objects containing a unique <code>name</code>, a natural-language <code>description</code>, and a strict <code>inputSchema</code> (JSON Schema format specifying required parameters, data types, and properties).</li>
+      <li><strong>Discovery Risk:</strong> If the description is vague or the input schema lies about field types, Claude will construct broken payloads.</li>
+    </ul>
+    <h4>B. Resource Discovery (<code>resources/list</code> and <code>resources/templates</code>)</h4>
+    <ul>
+      <li><strong>What it is:</strong> Static or dynamic data sources (like file contents, database logs, API payloads, or documentation) that the model can read or reference.</li>
+      <li><strong>Form it takes:</strong> URIs (e.g., <code>postgres://db/users</code> or <code>file:///logs/error.log</code>), companion MIME types, and human-readable names. Resource templates use URI templates (like <code>users://{id}</code>) so Claude can discover how to dynamically construct data endpoints.</li>
+      <li><strong>Discovery Risk:</strong> If a resource template mischaracterizes how parameters map to the URI, Claude will fetch empty or unauthorized endpoints.</li>
+    </ul>
+    <h4>C. Prompt Discovery (<code>prompts/list</code>)</h4>
+    <ul>
+      <li><strong>What it is:</strong> Reusable workflow templates or "starter commands" hosted by the server.</li>
+      <li><strong>Form it takes:</strong> A catalog of predefined prompt structures with argument definitions that guide Claude on <em>how</em> to interact with that specific server's data effectively.</li>
+      <li><strong>Discovery Risk:</strong> If a prompt template encodes bad assumptions about the underlying data workflow, Claude inherits those flawed procedural habits.</li>
+    </ul>
+    <hr>
+    <h3>3. How Much Information is Actually Passed?</h3>
+    <p>The volume of information shared during discovery depends on the <strong>architecture pattern</strong> chosen by the server author:</p>
+    <ol>
+      <li><strong>The "Fat Catalog" Approach (High Context Load):</strong><br>Some servers dump dozens of tool definitions, massive JSON schemas, and extensive resource trees right into the initialization phase. While Claude immediately "knows" everything, this consumes massive amounts of the LLM's context window, which can degrade overall reasoning performance (a phenomenon known as context pollution).</li>
+      <li><strong>The "Lazy/Paginating" Approach (Low Initial Load):</strong><br>The server uses pagination cursors (<code>nextCursor</code>) via <code>tools/list</code> to drip-feed capabilities only when requested. Claude gets a high-level summary first and has to dig deeper to discover specific tools, which saves context space but increases round-trip latency.</li>
+    </ol>
+    <h3>Summary</h3>
+    <p>Because discovery takes the form of <strong>JSON schemas, URI templates, and natural language descriptions</strong>, Claude relies entirely on text interpretation to map your intent to the server's reality. When an MCP server author writes lazy descriptions or inaccurate schemas, they are feeding poisoned metadata into Claude's discovery pipeline.</p>
+  </div>
+  </div>
+
+  <!-- Q2 ChatGPT -->
+  <div class="panel" role="tabpanel" id="q2-chatgpt" aria-labelledby="t-q2-chatgpt" hidden>
+  <div class="answer">
+    <p>An MCP server can reveal a surprisingly large amount of information to an AI agent. The important distinction is between what the server declares it can do, what it describes in detail, what information it makes accessible, and what the agent can establish by actually using it.</p>
+    <p>For your work on agentic business processes, I would treat MCP discovery as a form of capability discovery and interface analysis, rather than simply retrieving a list of available tools.</p>
+    <h3>1. The levels of MCP discovery</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Level</th><th>Depth</th><th>What it covers</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>1. Server identity and capabilities</td><td>Basic</td><td>The server's name, version, supported protocol versions, declared capabilities and optional instructions. This tells the agent what categories of functionality may be available.</td><td>A finance server supports tools and resources.</td></tr>
+        <tr><td>2. Interface and operation discovery</td><td>Detailed</td><td>Names and descriptions of individual tools, their input parameters, required fields, data types, constraints and sometimes output schemas or behavioural annotations.</td><td><code>get_transaction</code>, <code>validate_payment</code>, <code>submit_payment</code>.</td></tr>
+        <tr><td>3. Data and contextual discovery</td><td>Contextual</td><td>Resources, resource templates, documentation, reference data and reusable prompt templates. These may help the agent understand the business domain and the information required to operate.</td><td>Transaction records, payment-status definitions and reconciliation instructions.</td></tr>
+        <tr><td>4. Behavioural and workflow discovery</td><td>Requires further analysis</td><td>By examining documentation, schemas, tool results and, where authorised, testing operations, an agent may infer dependencies, preconditions, side effects, failure modes and possible sequences of operations.</td><td>A payment must be validated before submission, and submission may be irreversible.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The first three levels can be supported directly by MCP's discovery mechanisms, depending on what the server exposes. The fourth is principally an analysis process built on top of MCP. A server does not automatically disclose its complete business logic or workflow.</p>
+    <span class="srcnote">cited: GitHub (+2)</span>
+    <h3>2. What forms can the information take?</h3>
+    <p>MCP defines three principal server-provided primitives, each serving a different purpose.</p>
+    <span class="srcnote">cited: GitHub (+2)</span>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Form</th><th>What it provides</th><th>How an agent uses it</th></tr></thead>
+      <tbody>
+        <tr><td>Tools</td><td>Callable operations and their schemas</td><td>Performs tasks or queries systems</td></tr>
+        <tr><td>Resources</td><td>Readable contextual information, often identified by URIs</td><td>Retrieves data, documentation or reference material</td></tr>
+        <tr><td>Prompts</td><td>Reusable instruction templates, potentially with parameters</td><td>Structures a particular task or interaction</td></tr>
+      </tbody>
+    </table></div>
+    <p>Additional discovery information includes server identity, protocol compatibility, capability declarations and optional instructions.</p>
+    <p>One distinction matters: a tool's description is not its implementation. A tool called <code>validate_claim</code> might reveal its inputs and intended purpose, but not necessarily the rules it applies internally.</p>
+    <h3>3. How much can you discover about a business process?</h3>
+    <p>Consider an MCP server connected to an insurance claims system.</p>
+    <h4>Example: insurance claim processing</h4>
+    <p><em>Illustrative discovery results, not a claim about a particular server.</em></p>
+    <p><strong>What the interface declares</strong></p>
+    <ul>
+      <li><code>get_claim(claim_id)</code></li>
+      <li><code>check_policy(policy_id)</code></li>
+      <li><code>validate_claim(claim_id)</code></li>
+      <li><code>approve_claim(claim_id)</code></li>
+    </ul>
+    <p><strong>What the schemas and resources reveal</strong></p>
+    <ul>
+      <li>Required identifiers and data types</li>
+      <li>Available claim and policy fields</li>
+      <li>Status values and validation results</li>
+      <li>Documentation and business definitions, if exposed</li>
+    </ul>
+    <p><strong>What a separate analysis agent can investigate</strong></p>
+    <ul>
+      <li>Whether policy validation precedes claim approval</li>
+      <li>Which decisions require judgement rather than fixed rules</li>
+      <li>Whether operations modify records or create financial commitments</li>
+      <li>Which exceptions require escalation to a human</li>
+      <li>Which checks can be performed independently or in parallel</li>
+    </ul>
+    <p>The last stage is where this becomes useful for designing agentic workflows. The agent transforms a technical interface into a preliminary model of the underlying business process.</p>
+    <p>However, it must distinguish between declared facts, observed behaviour and inferred relationships. For example, the presence of both <code>validate_claim</code> and <code>approve_claim</code> does not prove that validation is a mandatory precondition for approval.</p>
+    <h3>4. A further dimension: the depth of investigation</h3>
+    <p>There are two independent questions: how much information the server exposes, and how deeply the agent investigates it.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Investigation method</th><th>Typical depth</th></tr></thead>
+      <tbody>
+        <tr><td>Static metadata inspection</td><td>Names, descriptions and schemas</td></tr>
+        <tr><td>Documentation and resource analysis</td><td>Domain concepts, rules and data definitions</td></tr>
+        <tr><td>Read-only tool execution</td><td>Actual records, responses and observed constraints</td></tr>
+        <tr><td>Controlled testing</td><td>Error behaviour, edge cases and state transitions</td></tr>
+        <tr><td>Source-code or implementation inspection, if authorised</td><td>Internal rules and implementation details</td></tr>
+      </tbody>
+    </table></div>
+    <p>These are analytical categories, not formal MCP levels. Not every server permits every method. In particular, write operations should not be tested against production data merely to discover their behaviour.</p>
+    <h3>5. The opportunity: an MCP discovery agent</h3>
+    <p>For your agentic business-process methodology, I would build a discovery agent that produces a structured capability model rather than just a tool inventory.</p>
+    <p>Its output could include:</p>
+    <ul>
+      <li><strong>Capability catalogue:</strong> every discovered tool, resource and prompt.</li>
+      <li><strong>Input/output model:</strong> schemas, required fields, constraints and result structures.</li>
+      <li><strong>Data model:</strong> entities, identifiers, relationships and status fields.</li>
+      <li><strong>Operation classification:</strong> read, calculate, validate, create, update, approve or delete.</li>
+      <li><strong>Reasoning requirements:</strong> deterministic rule application, classification, evidence assessment or contextual judgement.</li>
+      <li><strong>Dependency hypotheses:</strong> likely prerequisites, sequencing constraints and parallelisable operations.</li>
+      <li><strong>Risk model:</strong> side effects, reversibility, permissions and human approval requirements.</li>
+      <li><strong>Evidence and confidence:</strong> what is explicitly documented, what has been tested and what remains uncertain.</li>
+    </ul>
+    <p>The result would be a machine-readable description of the available operational capabilities, suitable for feeding into a subsequent business-process analysis agent.</p>
+    <p>The key architectural point is that MCP discovery supplies the raw interface information. Your own methodology would add semantic interpretation, reasoning analysis, dependency inference and validation. That additional layer is what could turn ordinary MCP integration into a systematic method for designing and optimising agentic workflows.</p>
+  </div>
+  </div>
+
+  <!-- Q2 Copilot -->
+  <div class="panel" role="tabpanel" id="q2-copilot" aria-labelledby="t-q2-copilot" hidden>
+  <div class="answer">
+    <p>In the Model Context Protocol (MCP) ecosystem, discovery allows an AI client or host application to map out, understand, and safely interact with an MCP server. The depth of information exposed during discovery is multi-layered, translating raw data connections into actionable cognitive capabilities for large language models (LLMs).<a class="cite" href="https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts">1</a><a class="cite" href="https://nhimg.org/glossary/mcp-server-discovery/">2</a><a class="cite" href="https://www.coursera.org/articles/mcp">3</a><a class="cite" href="https://www.databricks.com/blog/what-is-model-context-protocol">4</a></p>
+    <p>Here is how much information can be extracted during the discovery process, categorized by its levels and forms:</p>
+    <h3>1. Protocol &amp; Transport Level (The Handshake)</h3>
+    <p>Before the AI can leverage a server, the host application executes an initial handshake protocol. This level establishes basic connectivity, compatibility, and systemic boundaries.<a class="cite" href="https://www.databricks.com/blog/what-is-model-context-protocol">1</a><a class="cite" href="https://www.coursera.org/articles/mcp">2</a></p>
+    <ul>
+      <li><strong>Capabilities Exchange:</strong> The server explicitly declares what types of protocol features it supports (e.g., whether it allows dynamic resource subscriptions, streaming capabilities for long-running operations, or notification hooks).<a class="cite" href="https://www.databricks.com/blog/what-is-model-context-protocol">1</a></li>
+      <li><strong>Version Matching:</strong> Discovery captures the specific MCP protocol version the server runs to ensure communication compatibility.<a class="cite" href="https://www.coursera.org/articles/mcp">1</a></li>
+      <li><strong>Endpoint Metadata:</strong> Information about the server's basic footprint, including role configurations, access control validation schemas, and transport details (such as JSON-RPC 2.0 formatting specifications).<a class="cite" href="https://obot.ai/resources/learning-center/mcp-tool-discovery/">1</a><a class="cite" href="https://nhimg.org/glossary/mcp-server-discovery/">2</a><a class="cite" href="https://www.databricks.com/blog/what-is-model-context-protocol">3</a></li>
+    </ul>
+    <h3>2. Functional Capability Level (The Core "Surface Area")</h3>
+    <p>Once compatibility is verified, the server publishes its "capability surface"—the specific mechanisms an AI can use to gather context or take actions. Discovery pulls complete machine-readable manifests across three primary forms:<a class="cite" href="https://www.databricks.com/blog/what-is-model-context-protocol">1</a></p>
+    <ul>
+      <li><strong>Tools (Active Functions):</strong> The server exposes executable functions that the LLM can decide to call. Discovery reveals the tool names, semantic descriptions (telling the AI when and why to use it), and exact input argument schemas (JSON schemas detailing required types, parameters, and structural constraints).<a class="cite" href="https://www.gitbook.com/blog/what-is-mcp-server-documentation">1</a><a class="cite" href="https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts">2</a></li>
+      <li><strong>Resources (Passive Context Data):</strong> These are read-only, file-like data sources. Discovery reveals URI schemas (e.g., postgres://database/schema or file://docs/internal), mime-types, and text/binary descriptions that help the application know what kind of background knowledge is accessible.<a class="cite" href="https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts">1</a><a class="cite" href="https://www.gitbook.com/blog/what-is-mcp-server-documentation">2</a></li>
+      <li><strong>Prompts (Guided Workflows):</strong> Pre-built instruction templates that encode best practices. Discovery reveals the prompt layout and required arguments, allowing the host application to present structured workflows to the user or model.<a class="cite" href="https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts">1</a><a class="cite" href="https://www.gitbook.com/blog/what-is-mcp-server-documentation">2</a></li>
+    </ul>
+    <h3>3. Operational &amp; Security Governance Level</h3>
+    <p>In enterprise and production setups, discovery expands into network mapping and active observation to minimize risk and governance fragmentation.<a class="cite" href="https://nhimg.org/glossary/mcp-server-discovery/">1</a><a class="cite" href="https://obot.ai/resources/learning-center/mcp-tool-discovery/">2</a></p>
+    <ul>
+      <li><strong>Deployment Form/Location:</strong> It identifies how and where the server is running—whether it is a Local server (running as a sub-process via standard I/O on the user's machine), a Remote service (cloud-hosted database endpoints or web APIs), or a Hosted application wrapper.</li>
+      <li><strong>Access &amp; Identity Metadata:</strong> Details regarding authorization expectations, capturing which users or specific AI agents hold the access levels required to touch individual tools or data repositories.</li>
+      <li><strong>Data &amp; Command Flow Mapping:</strong> Security-focused discovery scans (leveraging tools like network logs and system configurations) can deduce how commands route from the AI host to back-end infrastructure, exposing potential vulnerabilities or structural anomalies.<a class="cite" href="https://www.cognism.com/blog/mcp-server-defined">1</a><a class="cite" href="https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts">2</a><a class="cite" href="https://www.coursera.org/articles/mcp">3</a><a class="cite" href="https://nhimg.org/glossary/mcp-server-discovery/">4</a><a class="cite" href="https://obot.ai/resources/learning-center/mcp-tool-discovery/">5</a></li>
+    </ul>
+    <h3>Summary of Forms Taken During Discovery</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Discovery Level</th><th>Form of Data Exchanged</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Systemic / Transport</td><td>Protocol versions, JSON-RPC 2.0 schemas, meta tags</td><td>Establishes the communication path and validates security rules.</td></tr>
+        <tr><td>Semantic / Capability</td><td>Names, natural language descriptions, parameter constraints</td><td>Teaches the LLM exactly what the server can do and how to invoke it.</td></tr>
+        <tr><td>Operational / Inventory</td><td>URIs, system locations, real-time configuration state</td><td>Allows administrators to track active AI capabilities and ensure compliance.</td></tr>
+      </tbody>
+    </table></div>
+    <p>To explore how to implement or interact with this architecture, please share:</p>
+    <ul>
+      <li>Are you designing a custom MCP server or building a client application to discover them?</li>
+      <li>Do you need assistance mapping out specific JSON-RPC discovery methods?</li>
+    </ul>
+  </div>
+  </div>
+</section>
+
+<p class="note">Replies are reproduced as given by each assistant on 29 October 2026, with Markdown converted to HTML. Copilot's inline source references are kept as superscript links; ChatGPT's source badges are noted in small type where they appeared.</p>
+</div>
+
+<script>
+(function(){
+  var groups=document.querySelectorAll('[role="tablist"]');
+  function activate(list,tab){
+    list.querySelectorAll('.tab').forEach(function(t){
+      var on=t===tab;
+      t.setAttribute('aria-selected',on?'true':'false');
+      t.tabIndex=on?0:-1;
+      var p=document.getElementById(t.getAttribute('aria-controls'));
+      if(p)p.hidden=!on;
+    });
+    try{localStorage.setItem('tab-'+list.dataset.group,tab.id);}catch(e){}
+  }
+  groups.forEach(function(list){
+    var tabs=Array.prototype.slice.call(list.querySelectorAll('.tab'));
+    tabs.forEach(function(t){
+      t.addEventListener('click',function(){activate(list,t);});
+      t.addEventListener('keydown',function(e){
+        var i=tabs.indexOf(t),n=null;
+        if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+        if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+        if(n){e.preventDefault();n.focus();activate(list,n);}
+      });
+    });
+    var saved=null;
+    try{saved=localStorage.getItem('tab-'+list.dataset.group);}catch(e){}
+    var start=saved&&document.getElementById(saved);
+    activate(list,start||tabs[0]);
+  });
+})();
+</script>
+
+</body></html>

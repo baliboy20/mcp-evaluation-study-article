@@ -16,7 +16,7 @@ from the findings.
 | `synthetic-data/` | Generated datasets and the `generators/` that produce them |
 | `agents/` | Agent configurations, prompts and harness scripts used for live runs |
 | `docs/` | Methodology, conventions and evaluation criteria |
-| `html/` | HTML versions of the docs (open `html/index.html`); rebuild with `scripts/build-html.sh` |
+| `html/` | HTML versions of the docs (open `html/index.html`); rebuild with `scripts/build-html.sh`. Standalone pages such as saved artifacts go in `html/pages/` |
 
 ## Workflow
 
