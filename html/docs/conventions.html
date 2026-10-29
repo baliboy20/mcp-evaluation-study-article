@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Conventions</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+<nav><a href="../index.html">Index</a> · source: <code>docs/conventions.md</code></nav>
+<header id="title-block-header">
+<h1 class="title">Conventions</h1>
+</header>
+<h1 id="conventions">Conventions</h1>
+<h2 id="study-ids">Study IDs</h2>
+<p>Three-digit, zero-padded, plus a short kebab-case name:
+<code>001-tool-selection</code>. The same ID names the study folder and
+its results folder.</p>
+<h2 id="results">Results</h2>
+<p><code>results/&lt;study-id&gt;/&lt;YYYY-MM-DD&gt;-run&lt;N&gt;/</code>
+containing:</p>
+<ul>
+<li><code>run.json</code>: metadata (agent, model, MCP server version,
+data seed, start/end time)</li>
+<li><code>transcripts/</code>: raw agent transcripts (JSONL)</li>
+<li><code>metrics.csv</code>: one row per task/trial</li>
+<li><code>notes.md</code>: anything unusual during the run</li>
+</ul>
+<p>Keep raw outputs unedited; put derived analysis in
+<code>analysis/</code> beside them.</p>
+<h2 id="synthetic-data">Synthetic data</h2>
+<p>Every dataset must be reproducible: record the generator script and
+seed in a <code>README.md</code> next to the data. Never commit real
+personal data or secrets.</p>
+<h2 id="mcp-servers">MCP servers</h2>
+<p>One folder per server under <code>mcp-servers/&lt;name&gt;/</code>
+with its own README describing tools exposed, how to run it, and which
+studies use it.</p>
+<h2 id="articles">Articles</h2>
+<p><code>articles/&lt;YYYY-MM&gt;-&lt;slug&gt;.md</code>. Cite studies
+by ID and link to their results.</p>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>MCP Evaluation Study</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<nav><a href="./index.html">Index</a> · source: <code>README.md</code></nav>
+<header id="title-block-header">
+<h1 class="title">MCP Evaluation Study</h1>
+</header>
+<h1 id="mcp-evaluation-study">MCP Evaluation Study</h1>
+<p>Practical studies and lab tests that evaluate Model Context Protocol
+(MCP) servers with live agents, synthetic data, and custom MCP servers,
+plus the articles written from the findings.</p>
+<h2 id="layout">Layout</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Folder</th>
+<th>What goes there</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>articles/</code></td>
+<td>Written articles and drafts (Markdown), one file or folder per
+article</td>
+</tr>
+<tr class="even">
+<td><code>studies/</code></td>
+<td>One folder per study/lab test: hypothesis, setup, procedure,
+findings</td>
+</tr>
+<tr class="odd">
+<td><code>studies/_template/</code></td>
+<td>Copy this to start a new study</td>
+</tr>
+<tr class="even">
+<td><code>results/</code></td>
+<td>Raw and processed run outputs, organised by study ID and run
+date</td>
+</tr>
+<tr class="odd">
+<td><code>mcp-servers/</code></td>
+<td>Source for custom MCP servers used in the studies</td>
+</tr>
+<tr class="even">
+<td><code>synthetic-data/</code></td>
+<td>Generated datasets and the <code>generators/</code> that produce
+them</td>
+</tr>
+<tr class="odd">
+<td><code>agents/</code></td>
+<td>Agent configurations, prompts and harness scripts used for live
+runs</td>
+</tr>
+<tr class="even">
+<td><code>docs/</code></td>
+<td>Methodology, conventions and evaluation criteria</td>
+</tr>
+<tr class="odd">
+<td><code>html/</code></td>
+<td>HTML versions of the docs (open <code>html/index.html</code>);
+rebuild with <code>scripts/build-html.sh</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="workflow">Workflow</h2>
+<ol type="1">
+<li>Copy <code>studies/_template</code> to
+<code>studies/NNN-short-name</code> (e.g.
+<code>studies/001-tool-selection</code>).</li>
+<li>Fill in <code>study.md</code>: question, hypothesis, setup,
+metrics.</li>
+<li>Build or reuse an MCP server in <code>mcp-servers/</code> and data
+in <code>synthetic-data/</code>.</li>
+<li>Run the agents; save outputs to
+<code>results/NNN-short-name/YYYY-MM-DD-runN/</code>.</li>
+<li>Record findings back in <code>study.md</code>; write up in
+<code>articles/</code>.</li>
+</ol>
+<p>See <code>docs/conventions.md</code> for naming and result-file
+formats.</p>
+</body>
+</html>
